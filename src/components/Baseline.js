@@ -14,7 +14,13 @@ import PropTypes from "prop-types";
 import _ from "underscore";
 
 const defaultStyle = {
-    label: {
+    valueLabel: {
+        fill: "#8B7E7E", // Default label color
+        fontWeight: 100,
+        fontSize: 11,
+        pointerEvents: "none"
+    },
+    cellLabel: {
         fill: "#8B7E7E", // Default label color
         fontWeight: 100,
         fontSize: 11,
@@ -85,10 +91,15 @@ export default class Baseline extends React.Component {
         // Style
         //
 
-        const labelStyle = merge(
+        const valueLabelStyle = merge(
             true,
-            defaultStyle.label,
-            this.props.style.label ? this.props.style.label : {}
+            defaultStyle.valueLabel,
+            this.props.style.valueLabel ? this.props.style.valueLabel : {}
+        );
+        const cellLabelStyle = merge(
+            true,
+            defaultStyle.cellLabel,
+            this.props.style.cellLabel ? this.props.style.cellLabel : {}
         );
         const lineStyle = merge(
             true,
@@ -96,17 +107,29 @@ export default class Baseline extends React.Component {
             this.props.style.line ? this.props.style.line : {}
         );
 
+        const valueLabelPositionX = this.props.cellLabel ? textPositionX - 30 : textPositionX;
+
         return (
             <g className="baseline" transform={transform}>
                 <polyline points={points} style={lineStyle} />
-                <text
-                    style={labelStyle}
-                    x={textPositionX}
-                    y={textPositionY}
-                    textAnchor={textAnchor}
-                >
-                    {this.props.label}
-                </text>
+                {this.props.valueLabel &&
+                    <text
+                        style={valueLabelStyle}
+                        x={valueLabelPositionX}
+                        y={textPositionY}
+                        textAnchor={textAnchor}
+                    >
+                        {this.props.valueLabel}
+                    </text>}
+                {this.props.cellLabel &&
+                    <text
+                        style={cellLabelStyle}
+                        x={textPositionX}
+                        y={textPositionY}
+                        textAnchor={textAnchor}
+                    >
+                        {this.props.cellLabel}
+                    </text>}
             </g>
         );
     }
@@ -114,44 +137,50 @@ export default class Baseline extends React.Component {
 
 Baseline.defaultProps = {
     value: 0,
-    label: "",
+    valueLabel: "",
+    cellLabel: "",
     position: "left",
     style: defaultStyle
 };
 
 Baseline.propTypes = {
     /**
-   * Reference to the axis which provides the vertical scale for drawing. e.g.
-   * specifying axis="trafficRate" would refer the y-scale to the YAxis of id="trafficRate".
-   */
+     * Reference to the axis which provides the vertical scale for drawing. e.g.
+     * specifying axis="trafficRate" would refer the y-scale to the YAxis of id="trafficRate".
+     */
     axis: PropTypes.string.isRequired, // eslint-disable-line
     /**
-   * An object describing the style of the baseline of the form
-   * { label, line }. "label" and "line" are both objects containing
-   * the inline CSS for that part of the baseline.
-   */
+     * An object describing the style of the baseline of the form
+     * { label, line }. "label" and "line" are both objects containing
+     * the inline CSS for that part of the baseline.
+     */
     style: PropTypes.shape({
-        label: PropTypes.object, // eslint-disable-line
+        valueLabel: PropTypes.object, // eslint-disable-line
+        cellLabel: PropTypes.object, // eslint-disable-line
         line: PropTypes.object // eslint-disable-line
     }),
     /**
-   * The y-value to display the line at.
-   */
+     * The y-value to display the line at.
+     */
     value: PropTypes.number,
     /**
-   * The label to display with the axis.
-   */
-    label: PropTypes.string,
+     * The value label to display with the axis.
+     */
+    valueLabel: PropTypes.string,
     /**
-   * Whether to display the label on the "left" or "right".
-   */
+     * The cell label to display with the axis.
+     */
+    cellLabel: PropTypes.string,
+    /**
+     * Whether to display the label on the "left" or "right".
+     */
     position: PropTypes.oneOf(["left", "right"]),
     /**
-   * [Internal] The yScale supplied by the associated YAxis
-   */
+     * [Internal] The yScale supplied by the associated YAxis
+     */
     yScale: PropTypes.func,
     /**
-   * [Internal] The width supplied by the surrounding ChartContainer
-   */
+     * [Internal] The width supplied by the surrounding ChartContainer
+     */
     width: PropTypes.number
 };
