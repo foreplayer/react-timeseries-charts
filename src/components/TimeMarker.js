@@ -21,15 +21,7 @@ import Label from "./Label";
 
 export default class TimeMarker extends React.Component {
     renderLine(posx) {
-        return (
-            <line
-                style={this.props.infoStyle.line}
-                x1={posx}
-                y1={0}
-                x2={posx}
-                y2={this.props.height}
-            />
-        );
+        return <rect style={this.props.infoStyle.line} x={posx} y={0} />;
     }
 
     renderTimeMarker(d) {
